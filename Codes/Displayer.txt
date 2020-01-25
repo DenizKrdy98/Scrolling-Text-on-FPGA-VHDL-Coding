@@ -1,0 +1,54 @@
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+USE IEEE.STD_LOGIC_ARITH.ALL;
+USE IEEE.STD_LOGIC_UNSIGNED.ALL;
+USE IEEE.NUMERIC_STD.ALL;
+
+entity SevSegDriver is
+    Port ( Letter_0 : in  STD_LOGIC_VECTOR (6 downto 0); -- shifted input signals letter by letter
+           Letter_1 : in  STD_LOGIC_VECTOR (6 downto 0);
+           Letter_2 : in  STD_LOGIC_VECTOR (6 downto 0);
+           Letter_3 : in  STD_LOGIC_VECTOR (6 downto 0);
+           Letter_4 : in  STD_LOGIC_VECTOR (6 downto 0);
+           Letter_5 : in  STD_LOGIC_VECTOR (6 downto 0);
+           Letter_6 : in  STD_LOGIC_VECTOR (6 downto 0);
+           Letter_7 : in  STD_LOGIC_VECTOR (6 downto 0);
+			  
+			  CLK : in std_logic;									-- 100 hz clock for display
+           Driver : out  STD_LOGIC_VECTOR (7 downto 0);  -- Which digit will be displaying
+           SevSegData : out  STD_LOGIC_VECTOR (6 downto 0)); -- data of each segment
+end SevSegDriver;
+
+architecture Behavioral of SevSegDriver is
+signal COUNTER : STD_LOGIC_VECTOR (2 downto 0) := "000";
+
+begin
+PROCESS_CLK : PROCESS(CLK)
+begin
+	If (rising_edge(CLK)) THEN
+		COUNTER <= COUNTER + 1;
+	end if;
+END PROCESS;
+
+with COUNTER select SevSegData <=
+		Letter_0 when "000",
+		Letter_1 when "001",
+		Letter_2 when "010",
+		Letter_3 when "011",
+		Letter_4 when "100",
+		Letter_5 when "101",
+		Letter_6 when "110",
+		Letter_7 when others;
+		
+with COUNTER select Driver <=
+		"11111110"  when "000",
+		"11111101"  when "001",
+		"11111011"  when "010",
+		"11110111"  when "011",
+		"11101111"  when "100",
+		"11011111"  when "101",
+		"10111111"  when "110",
+		"01111111"  when others;
+
+end Behavioral;
+

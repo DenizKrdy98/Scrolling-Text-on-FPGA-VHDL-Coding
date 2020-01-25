@@ -1,0 +1,29 @@
+net "M_CLK" loc =P40; 
+net "Direction_n" loc = P15;
+
+net "Start_n" loc = P78;
+net "Pause_n" loc = P37;
+
+
+net "TSelecter[0]" loc = P12;
+net "TSelecter[1]" loc = P5;
+
+net "WSelecter[0]" loc = P4;
+net "WSelecter[1]" loc = P94;
+
+NET "SevSegDri[0]" LOC = P50;
+NET "SevSegDri[1]" LOC = P49;
+NET "SevSegDri[2]" LOC = P52;
+NET "SevSegDri[3]" LOC = P56;
+NET "SevSegDri[4]" LOC = P59;
+NET "SevSegDri[5]" LOC = P57;
+NET "SevSegDri[6]" LOC = P60;
+NET "SevSegDri[7]" LOC = P61;
+
+NET "SevenSegData[6]" LOC = P71;
+NET "SevenSegData[5]" LOC = P62;
+NET "SevenSegData[4]" LOC = P65;
+NET "SevenSegData[3]" LOC = P72;
+NET "SevenSegData[2]" LOC = P73;
+NET "SevenSegData[1]" LOC = P98;
+NET "SevenSegData[0]" LOC = P64;

@@ -1,0 +1,51 @@
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+USE IEEE.STD_LOGIC_ARITH.ALL;
+USE IEEE.STD_LOGIC_UNSIGNED.ALL;
+USE IEEE.NUMERIC_STD.ALL;
+
+--Obtaining Various Special Clock for scrolling at different speeds.
+
+entity Special_Clock is
+    Port ( CLK : in  STD_LOGIC;
+			  T_Selecter : in std_logic_vector (1 downto 0);
+           S_CLK : out  STD_LOGIC);
+end Special_Clock;
+
+architecture Behavioral of Special_Clock is
+signal COUNTER : STD_LOGIC_VECTOR(9 DOWNTO 0) := "0000000000";
+signal N       : STD_LOGIC_VECTOR(9 downto 0);
+signal N_divby2: STD_LOGIC_VECTOR(9 downto 0);
+signal T_n		: STD_LOGIC_VECTOR(1 downto 0);
+
+begin
+
+T_n <= T_Selecter;
+
+with T_n select N <=
+		"0101011110" when "00", --350
+		"0110100100" when "01", -- 420
+		"0111110100" when "11", -- 500
+		"1000110000" when others; -- 560
+
+with T_n select N_divby2 <=
+		"0010101111" when "00", --350/2
+		"0011010010" when "01", --420/2
+		"0011111010" when "11", -- 500/2
+		"0100011000" when others; -- 560/2			
+
+S_CLK_PROCESS: PROCESS(CLK)
+begin
+	If(CLK' EVENT AND CLK='1') then 
+			If( COUNTER < N) then -- 
+					COUNTER <= COUNTER + "1";
+			else  
+				COUNTER<="0000000000";
+			end if;
+	end if;
+end process;
+  
+S_CLK <= '1' WHEN COUNTER < N_divby2 ELSE '0'; 
+
+end Behavioral;
+

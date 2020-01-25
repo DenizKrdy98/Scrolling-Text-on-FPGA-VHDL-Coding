@@ -1,0 +1,124 @@
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+USE IEEE.STD_LOGIC_ARITH.ALL;
+USE IEEE.STD_LOGIC_UNSIGNED.ALL;
+USE IEEE.NUMERIC_STD.ALL;
+
+entity Shifter is
+    Port ( start: in std_logic; -- starts the scroll process
+			  pause : in std_logic; -- pause to process
+			  Direction : in  STD_LOGIC; -- determine the direction of scroll
+           SPC_CLK : in  STD_LOGIC; -- Special clock input
+			  Word : in STD_LOGIC_VECTOR(1 downto 0); -- Word Selection input
+			  
+			  L0 : out STD_LOGIC_VECTOR(6 DOWNTO 0); -- Shifting output signals letter by letters
+			  L1 : out STD_LOGIC_VECTOR(6 DOWNTO 0);
+			  L2 : out STD_LOGIC_VECTOR(6 DOWNTO 0);
+           L3 : out STD_LOGIC_VECTOR(6 DOWNTO 0);
+			  L4 : out STD_LOGIC_VECTOR(6 DOWNTO 0);
+			  L5 : out STD_LOGIC_VECTOR(6 DOWNTO 0);
+			  L6 : out STD_LOGIC_VECTOR(6 DOWNTO 0);
+			  L7 : out STD_LOGIC_VECTOR(6 DOWNTO 0));
+end Shifter;
+
+architecture Behavioral of Shifter is
+
+signal Letter_0 : STD_LOGIC_VECTOR(6 DOWNTO 0); -- temporarly assigned letter signals
+signal Letter_1 : STD_LOGIC_VECTOR(6 DOWNTO 0);
+signal Letter_2 : STD_LOGIC_VECTOR(6 DOWNTO 0);
+signal Letter_3 : STD_LOGIC_VECTOR(6 DOWNTO 0);
+signal Letter_4 : STD_LOGIC_VECTOR(6 DOWNTO 0);
+signal Letter_5 : STD_LOGIC_VECTOR(6 DOWNTO 0);
+signal Letter_6 : STD_LOGIC_VECTOR(6 DOWNTO 0);
+signal Letter_7 : STD_LOGIC_VECTOR(6 DOWNTO 0);
+
+begin
+Shift_Process : process(SPC_CLK)
+begin
+	if(rising_edge(SPC_CLK)) then
+		if( start = '0') then
+			if( Word = "00") then 			-- WORD 'HELLO'
+				Letter_0 <= "0000001"; -- O
+				Letter_1 <= "1110001"; -- L
+				Letter_2 <= "1110001"; -- L
+				Letter_3 <= "0110000"; -- E
+				Letter_4 <= "1001000"; -- H
+				Letter_5 <= "1111111"; -- empty
+				Letter_6 <= "1111111"; -- empty
+				Letter_7 <= "1111111"; -- empty
+				
+			elsif ( Word = "01") then 		-- WORD 'LOGIC'
+				Letter_0 <= "0110001"; -- C
+				Letter_1 <= "1001111"; -- I
+				Letter_2 <= "0100001"; -- G
+				Letter_3 <= "0000001"; -- O
+				Letter_4 <= "1110001"; -- L
+				Letter_5 <= "1111111"; -- empty
+				Letter_6 <= "1111111"; -- empty
+				Letter_7 <= "1111111"; -- empty
+				
+			elsif ( Word = "10") then 		-- WORD 'CENGIZ' 
+				Letter_0 <= "0010010"; -- Z
+				Letter_1 <= "1001111"; -- I
+				Letter_2 <= "0100001"; -- G
+				Letter_3 <= "0001001"; -- N
+				Letter_4 <= "0110000"; -- E
+				Letter_5 <= "0110001"; -- C
+				Letter_6 <= "1111111"; -- empty
+				Letter_7 <= "1111111"; -- empty
+			else  								-- WORD 'DENIZ'
+				Letter_0 <= "0010010"; -- Z
+				Letter_1 <= "1001111"; -- I
+				Letter_2 <= "0001001"; -- N
+				Letter_3 <= "0110000"; -- E
+				Letter_4 <= "1000010"; -- D
+				Letter_5 <= "1111111"; -- empty	
+				Letter_6 <= "1111111"; -- empty
+				Letter_7 <= "1111111"; -- empty
+			end if;
+		elsif(Pause = '1') then -- PAUSING
+		
+				Letter_1 <= Letter_1;
+				Letter_2 <= Letter_2;
+				Letter_3 <= Letter_3;
+				Letter_4 <= Letter_4;
+				Letter_5 <= Letter_5;
+				Letter_6 <= Letter_6;
+				Letter_7 <= Letter_7;
+				Letter_0 <= Letter_0;
+		
+		elsif(Direction = '0') then -- SCROLL TO LEFT
+
+				Letter_1 <= Letter_0;
+				Letter_2 <= Letter_1;
+				Letter_3 <= Letter_2;
+				Letter_4 <= Letter_3;
+				Letter_5 <= Letter_4;
+				Letter_6 <= Letter_5;
+				Letter_7 <= Letter_6;
+				Letter_0 <= Letter_7;
+		else                        -- SCROLL TO RIGHT
+
+				Letter_1 <= Letter_2;
+				Letter_2 <= Letter_3;
+				Letter_3 <= Letter_4;
+				Letter_4 <= Letter_5;
+				Letter_5 <= Letter_6;
+				Letter_6 <= Letter_7;
+				Letter_7 <= Letter_0;
+				Letter_0 <= Letter_1;
+		end if;					
+	end if;
+end process;
+
+L0 <= Letter_0;
+L1 <= Letter_1;
+L2 <= Letter_2; 
+L3 <= Letter_3 ;
+L4 <= Letter_4 ;
+L5 <= Letter_5 ;
+L6 <= Letter_6 ;
+L7 <= Letter_7 ;
+
+end Behavioral;
+

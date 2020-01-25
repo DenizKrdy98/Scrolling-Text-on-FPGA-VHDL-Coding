@@ -1,0 +1,114 @@
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+--use IEEE.NUMERIC_STD.ALL;
+
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx primitives in this code.
+--library UNISIM;
+--use UNISIM.VComponents.all;
+
+entity Main is
+    Port ( Start_n : in STD_LOGIC;
+	        Pause_n : in STD_LOGIC;
+			  Direction_n : in  STD_LOGIC;
+			  TSelecter : in std_logic_vector(1 downto 0);
+			  WSelecter : in std_logic_vector(1 downto 0);
+			  M_CLK : in  STD_LOGIC;
+           SevenSegData : out  STD_LOGIC_VECTOR (6 downto 0);
+           SevSegDri : out  STD_LOGIC_VECTOR (7 downto 0));
+end Main;
+
+architecture Behavioral of Main is
+signal Dis_CLK : std_logic; -- Clock for Displayer
+signal Dis_CLK_2 : std_logic; -- Referensce Clock for Special Clock 
+signal SP_CLK_n : std_logic; -- Special Clock signal
+
+signal Letter0 : STD_LOGIC_VECTOR(6 DOWNTO 0);
+signal Letter1 : STD_LOGIC_VECTOR(6 DOWNTO 0);
+signal Letter2 : STD_LOGIC_VECTOR(6 DOWNTO 0);
+signal Letter3 : STD_LOGIC_VECTOR(6 DOWNTO 0);
+signal Letter4 : STD_LOGIC_VECTOR(6 DOWNTO 0);
+signal Letter5 : STD_LOGIC_VECTOR(6 DOWNTO 0); 
+signal Letter6 : STD_LOGIC_VECTOR(6 DOWNTO 0);
+signal Letter7 : STD_LOGIC_VECTOR(6 DOWNTO 0);
+
+	COMPONENT Hnd_Hz_Div
+	PORT(
+		MCLK : IN std_logic;          
+		HUNDREDHZCLOCK : OUT std_logic;
+		HUNDREDHZCLOCK_2 : OUT std_logic
+		);
+	END COMPONENT;
+	
+	COMPONENT Special_Clock
+	PORT(
+		CLK : IN std_logic;   
+		T_Selecter : in std_logic_vector(1 downto 0);
+		S_CLK : OUT std_logic
+		);
+	END COMPONENT;
+	
+	COMPONENT Shifter
+	PORT(
+	   Start : in STD_LOGIC;
+		Pause : in STD_LOGIC;
+		Direction : IN std_logic;
+		SPC_CLK : IN std_logic;        
+	   Word: in STD_LOGIC_VECTOR(1 downto 0);		
+		L0 : OUT std_logic_vector(6 downto 0);
+		L1 : OUT std_logic_vector(6 downto 0);
+		L2 : OUT std_logic_vector(6 downto 0);
+		L3 : OUT std_logic_vector(6 downto 0);
+		L4 : OUT std_logic_vector(6 downto 0);
+		L5 : OUT std_logic_vector(6 downto 0);
+		L6 : OUT std_logic_vector(6 downto 0);
+		L7 : OUT std_logic_vector(6 downto 0)
+		);
+	END COMPONENT;
+	
+	COMPONENT Word_Selecter
+	PORT(
+		Word : IN std_logic_vector(1 downto 0);
+		L0 : OUT std_logic_vector(6 downto 0);
+		L1 : OUT std_logic_vector(6 downto 0);
+		L2 : OUT std_logic_vector(6 downto 0);
+		L3 : OUT std_logic_vector(6 downto 0);
+		L4 : OUT std_logic_vector(6 downto 0);
+		L5 : OUT std_logic_vector(6 downto 0);
+		L6 : OUT std_logic_vector(6 downto 0);
+		L7 : OUT std_logic_vector(6 downto 0)
+		);
+	END COMPONENT;
+	
+	COMPONENT SevSegDriver
+	PORT(
+		Letter_0 : IN std_logic_vector(6 downto 0);
+		Letter_1 : IN std_logic_vector(6 downto 0);
+		Letter_2 : IN std_logic_vector(6 downto 0);
+		Letter_3 : IN std_logic_vector(6 downto 0);
+		Letter_4 : IN std_logic_vector(6 downto 0);
+		Letter_5 : IN std_logic_vector(6 downto 0);
+		Letter_6 : IN std_logic_vector(6 downto 0);
+		Letter_7 : IN std_logic_vector(6 downto 0);
+		CLK : IN std_logic;          
+		Driver : OUT std_logic_vector(7 downto 0);
+		SevSegData : OUT std_logic_vector(6 downto 0)
+		);
+	END COMPONENT;
+	
+begin
+
+CLOCK     : Hnd_Hz_Div  port map(M_CLK,Dis_CLK,Dis_CLK_2);
+SPCL_CLK  : Special_Clock  port map(Dis_CLK_2,TSelecter,SP_CLK_n);
+SHIFT     : Shifter  port map(Start_n,Pause_n,Direction_n,SP_CLK_n,WSelecter,Letter0,Letter1,Letter2,Letter3,Letter4,Letter5,Letter6,Letter7);
+DISPLAYER : SevSegDriver port map(Letter0,Letter1,Letter2,Letter3,Letter4,Letter5,Letter6,Letter7,Dis_CLK,SevSegDri,SevenSegData);
+	
+	
+
+
+end Behavioral;
+
